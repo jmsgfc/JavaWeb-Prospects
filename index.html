@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录界面</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+
+    margin-left: 80px;
+    width: 40%;
+    color: #e53ae3;
+    font-size: 105px;
+    font-family: '方正舒体', serif;
+    user-select: none;
+    text-align: center;
+    padding: 20px;
+}
+
+footer{
+    width: 80%;
+
+    padding: 20px;
+    text-align: center; 
+    color: white; 
+
+    font-size: 20px;
+    user-select: none;
+
+}
+
+body{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    /*background: linear-gradient(to right ,rgba(56,25,255,0.8), rgba(255,255,255,0.4));*/
+    background: url("bg1.png");
+}
+
+.main-content{
+    flex-grow:1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+}
+
+.main-login {
+    /*background: linear-gradient(to right, rgba(56, 25, 255, 0.4), rgba(255, 255, 255, 0.2));*/
+    display: flex;
+    align-items: center;
+    height: 70vh;
+    width: 40%; /* 调整宽度，可根据需要修改 */
+    margin-left: 20%; /* 与 header 保持间距 */
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    height: 10vh;
+    margin-bottom: 20px; /* 与下方输入框区域保持间距 */
+}
+
+#login-form{
+
+    border-radius: 10px;
+    /*background: linear-gradient(to right ,rgba(56,25,255,0.2), rgba(255,255,255,0.1));*/
+    width: 100%;
+    height: 30vh;
+    padding: 20px 30px;
+}
+
+.form-items{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+    height: 10vh;
+
+
+}
+
+.main-login label{
+    flex: 0 0 100px;
+    margin-right: 18px;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.main-login input{
+    flex: 1; 
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 0 15px;
+    font-size: 16px;
+}
+
+.button-group{
+    display: flex;
+    gap:30px;
+    /*margin:20px 20px;*/
+    /*padding:10%;*/
+    width: 100%;
+
+}
+
+.button-group button{
+    margin-left: 50px;
+    margin-right: 50px;
+    width: 40%;
+    height: 40px;
+    border-radius: 10px;
+    background: rgb(178, 234, 169);
+}
+
+.img-group{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 20vh;
+    gap:100px;
+    padding: 10px;
+
+}
+</style>
+</head>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<body>
+<div class="main-content">
+    <header>
+        救赎之翼的登录界面
+    </header>
+
+    <div class="main-login">
+        <img class="logo" src="logo.png" alt="福建理工大学">
+        <div id="login-form">
+            <div class="form-items">
+                <label>账号：</label>
+                <input type="text" v-model="loginData.uname" required>
+            </div>
+            <div class="form-items">
+                <label>密码：</label>
+                <input type="password" v-model="loginData.pwd" required>
+            </div>
+            <div class="button-group">
+                <button type="button" @click="login()">登录</button>
+                <button type="button" @click="register()">注册</button>
+            </div>
+            <div class="img-group">
+                <img src="logo1.png" alt="青小芒">
+                <img src="logo1.png" alt="青小芒">
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+<script>
+    const {createApp} = Vue;
+    createApp({
+        data(){
+            return {
+                loginData:{
+                    uname:"",
+                    pwd:"",
+                    token:""
+                }
+            }
+        },
+        methods:{
+            login(){
+                if(!this.loginData.uname || !this.loginData.pwd){
+                    alert("请填入完整信息！");
+                    return;
+                }
+                axios.post("http://localhost:8080/login",this.loginData )
+                    .then(res => {
+                        if(res.data.code === 1 ){
+                            alert("登录成功");
+                            // 通常会保存token到本地存储
+                            if (res.data.token) {
+                                localStorage.setItem('uname',res.data.uname);
+                                localStorage.setItem('token', res.data.token);
+                            }
+                            // 跳转到首页
+                            window.location.href = 'index.html';
+                        }else if(res.data.code === 0){
+                            alert("登录失败，用户名或密码错误");
+                        }
+                    })
+                .catch(err => {
+                    console.log(err)
+                })
+            },
+            register(){
+                alert("别点了，功能还没开发");
+            }
+        }
+    }).mount("#login-form");
+</script>
+
+<footer>Copyright © Wings of Redemption 闽ICP备3238921228号-1 福建省福州市晋安区鼓山一栋505号 350228</footer>
+</body>
+</html>
